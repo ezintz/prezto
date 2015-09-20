@@ -3,6 +3,7 @@
 #
 # Authors:
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
+#   Eduard Zintz <e@zintz.cc>
 #
 
 #
@@ -38,13 +39,23 @@ zstyle ':prezto:load' pmodule \
   'spectrum' \
   'utility' \
   'completion' \
+<<<<<<< HEAD
   'history-substring-search' \
   'syntax-highlighting' \
   'prompt' \
+=======
+  'prompt' \
+  'history-substring-search' \
+  'syntax-highlighting' \
+  'archive' \
+  'dpkg' \
+  'rsync' \
+>>>>>>> 27a6c03 (Adjusted settings)
   'tmux' \
   'ssh' \
   'git' \
   'node' \
+<<<<<<< HEAD
   'docker' \
   'dpkg' \
   'osx'
@@ -63,6 +74,9 @@ zstyle ':prezto:load' pmodule \
 # Set the entries to ignore in static '/etc/hosts' for host completion.
 # zstyle ':prezto:module:completion:*:hosts' etc-host-ignores \
 #   '0.0.0.0' '127.0.0.1'
+=======
+  'osx'
+>>>>>>> 27a6c03 (Adjusted settings)
 
 #
 # Editor
@@ -198,6 +212,7 @@ zstyle ':prezto:module:syntax-highlighting' highlighters \
 
 # Set syntax highlighting styles.
 zstyle ':prezto:module:syntax-highlighting' styles \
+<<<<<<< HEAD
    'default' 'none' \
    'unknown-token' 'fg=red,bold' \
    'reserved-word' 'fg=yellow' \
