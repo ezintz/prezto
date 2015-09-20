@@ -14,6 +14,11 @@ if [[ -z "$BROWSER" && "$OSTYPE" == darwin* ]]; then
 fi
 
 #
+# Android
+#
+export ANDROID_HOME=/usr/local/opt/android-sdk
+
+#
 # Editors
 #
 
