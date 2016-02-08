@@ -1,0 +1,16 @@
+#
+# Displays the IP address for the given container.
+#
+# Authors:
+#   Eduard Zintz <e@zintz.cc>
+#
+
+local ipAddress="$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' $1)"
+
+if [[ -n "$ipAddress" ]]; then
+  print "$ipAddress"
+  return 0
+else
+  print "$0: could not find container '$1'" >&2
+  return 1
+fi
