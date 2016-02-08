@@ -31,7 +31,7 @@ function pmodload {
   pmodules=("$argv[@]")
 
   # Add functions to $fpath.
-  fpath=(${pmodules:+${ZDOTDIR:-$HOME}/.zprezto/modules/${^pmodules}/functions(/FN)} $fpath)
+  fpath=(${pmodules:+${ZDOTDIR:-$HOME}/.dotfiles/prezto/modules/${^pmodules}/functions(/FN)} $fpath)
 
   function {
     local pfunction
@@ -40,7 +40,7 @@ function pmodload {
     setopt LOCAL_OPTIONS EXTENDED_GLOB
 
     # Load Prezto functions.
-    for pfunction in ${ZDOTDIR:-$HOME}/.zprezto/modules/${^pmodules}/functions/$~pfunction_glob; do
+    for pfunction in ${ZDOTDIR:-$HOME}/.dotfiles/prezto/modules/${^pmodules}/functions/$~pfunction_glob; do
       autoload -Uz "$pfunction"
     done
   }
@@ -49,19 +49,19 @@ function pmodload {
   for pmodule in "$pmodules[@]"; do
     if zstyle -t ":prezto:module:$pmodule" loaded 'yes' 'no'; then
       continue
-    elif [[ ! -d "${ZDOTDIR:-$HOME}/.zprezto/modules/$pmodule" ]]; then
+    elif [[ ! -d "${ZDOTDIR:-$HOME}/.dotfiles/prezto/modules/$pmodule" ]]; then
       print "$0: no such module: $pmodule" >&2
       continue
     else
-      if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/modules/$pmodule/init.zsh" ]]; then
-        source "${ZDOTDIR:-$HOME}/.zprezto/modules/$pmodule/init.zsh"
+      if [[ -s "${ZDOTDIR:-$HOME}/.dotfiles/prezto/modules/$pmodule/init.zsh" ]]; then
+        source "${ZDOTDIR:-$HOME}/.dotfiles/prezto/modules/$pmodule/init.zsh"
       fi
 
       if (( $? == 0 )); then
         zstyle ":prezto:module:$pmodule" loaded 'yes'
       else
         # Remove the $fpath entry.
-        fpath[(r)${ZDOTDIR:-$HOME}/.zprezto/modules/${pmodule}/functions]=()
+        fpath[(r)${ZDOTDIR:-$HOME}/.dotfiles/prezto/modules/${pmodule}/functions]=()
 
         function {
           local pfunction
@@ -71,7 +71,7 @@ function pmodload {
           setopt LOCAL_OPTIONS EXTENDED_GLOB
 
           # Unload Prezto functions.
-          for pfunction in ${ZDOTDIR:-$HOME}/.zprezto/modules/$pmodule/functions/$~pfunction_glob; do
+          for pfunction in ${ZDOTDIR:-$HOME}/.dotfiles/prezto/modules/$pmodule/functions/$~pfunction_glob; do
             unfunction "$pfunction"
           done
         }
