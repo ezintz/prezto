@@ -35,6 +35,20 @@ alias drmi='docker rmi -f $(docker images -q -a -f dangling=true)'
 alias ds='docker stop'
 alias dsa='docker stop $(docker ps -a -q)'
 
+alias dc="docker-compose"
+alias dcb="docker-compose build"
+alias dcd="docker-compose down"
+alias dcps="docker-compose ps"
+alias dcu="docker-compose up"
+
+alias dm="docker-machine"
+alias dmc="docker-machine create"
+alias dmip="docker-machine ip"
+alias dml="docker-machine ls"
+alias dmrc="docker-machine regenerate-certs"
+alias dms="docker-machine start"
+alias dmu="docker-machine upgrade"
+
 #
 # Functions
 #
