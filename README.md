@@ -9,7 +9,7 @@ Installation
 ------------
 
 Prezto will work with any recent release of Zsh, but the minimum required
-version is 4.3.17.
+version is 4.3.11.
 
   1. Launch Zsh:
 
@@ -88,7 +88,20 @@ accompanying README files to learn of what is available.
   3. Load the theme you like in *~/.zpreztorc* then open a new Zsh terminal
      window or tab.
 
-     ![sorin theme][2]
+     ![sorin theme][2]  
+     Note that the 'git' module may be required for special symbols to appear, such as those on the right of the above image. Add `'git'` to the list under `zstyle ':prezto:load' pmodule \ ` in your `.zpreztorc` to enable this module.
+### External Modules
+
+  1. By default modules will be loaded from */modules* and */contrib*.
+  2. Additional module directories can be added to the
+     `:prezto:load:pmodule-dirs` setting in *~/.zpreztorc*.
+
+     Note that module names need to be unique or they will cause an error when
+     loading.
+
+     ```console
+     zstyle ':prezto:load' pmodule-dirs $HOME/.zprezto-contrib
+     ```
 
 Customization
 -------------
@@ -113,6 +126,6 @@ This project is licensed under the MIT License.
 [3]: http://git-scm.com
 [4]: https://github.com
 [5]: http://gitimmersion.com
-[6]: http://gitref.org
+[6]: https://git.github.io/git-reference/
 [7]: http://www.bash2zsh.com/zsh_refcard/refcard.pdf
 [8]: http://grml.org/zsh/zsh-lovers.html
