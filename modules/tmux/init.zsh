@@ -17,6 +17,9 @@ fi
 # Auto Start
 #
 
+# Disable auto start if requested by environment variable.
+[[ ! -z "$TMUX_AUTOSTART_DISABLE" ]] && return 1
+
 if ([[ "$TERM_PROGRAM" = 'iTerm.app' ]] && \
   zstyle -t ':prezto:module:tmux:iterm' integrate \
 ); then
