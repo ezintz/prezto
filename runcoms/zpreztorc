@@ -141,6 +141,9 @@ zstyle ':prezto:module:git:status:ignore' submodules 'all'
 # Enable prefixed search.
 # zstyle ':prezto:module:history-substring-search' prefixed 'yes'
 
+# Set the search prefixed.
+# zstyle ':prezto:module:history-substring-search' prefixed 'yes'
+
 #
 # macOS
 #
