@@ -1,0 +1,15 @@
+#
+# Displays the logs for the given pod.
+#
+# Authors:
+#   Eduard Zintz <e@zintz.cc>
+#
+
+# function kplog {
+
+local pod_id
+pod_id (kubectl get pods -l app=$1 -o custom-columns=":metadata.name" | grep .)
+
+kubectl logs -f "$pod_id"
+
+# }

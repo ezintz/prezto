@@ -80,6 +80,3 @@ fi
 
 ## Disable TMUX if shell is loaded by any IntelliJ IDE.
 [[ ! -z "$INTELLIJ_ENVIRONMENT_READER" ]] && TMUX_AUTOSTART_DISABLE=1
-
-## Ensure Homebrew executables are added to $PATH
-eval "$(/opt/homebrew/bin/brew shellenv)"
