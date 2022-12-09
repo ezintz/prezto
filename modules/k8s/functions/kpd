@@ -7,8 +7,24 @@
 
 # function kplog {
 
-local pod_id
-pod_id (kubectl get pods -l app=$1 -o custom-columns=":metadata.name" | grep .)
+if [[ -z "$1" ]]; then
+  print "$0: no app label given." >&2
+  return 1
+fi
+
+local app_label
+app_label="$1"
+
+context=$(kubectl config current-context)
+pod_id=$(kubectl get pods -l app=$app_label -o custom-columns=":metadata.name" | grep .)
+if [[ $? -gt 0 ]]; then
+  return $?
+fi
+
+if [[ -z "$pod_id" ]]; then
+  print "$0: no pod found with label 'app=$app_label' in context $context." >&2
+  return 2
+fi
 
 kubectl delete pod "$pod_id"
 
