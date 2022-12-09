@@ -1,0 +1,19 @@
+#
+# Opens the Node.js online API documentation in the default browser.
+#
+# Authors:
+#   Eduard Zintz <e@zintz.cc>
+#
+
+# function kexec {
+
+local pod_id
+pod_id (kubectl get pods -l app=$1 -o custom-columns=":metadata.name" | grep .)
+
+if [[ -z "$2" ]]; then
+  $2 = 'sh'
+fi
+
+kubectl exec -it "$pod_id" $2
+
+# }

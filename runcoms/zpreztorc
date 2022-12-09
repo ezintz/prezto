@@ -51,6 +51,7 @@ zstyle ':prezto:load' pmodule \
   'git' \
   'node' \
   'docker' \
+  'k8s' \
   'dpkg' \
   'osx'
 
