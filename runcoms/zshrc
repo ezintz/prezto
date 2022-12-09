@@ -11,7 +11,3 @@ if [[ -s "${ZDOTDIR:-$HOME}/.dotfiles/prezto/init.zsh" ]]; then
 fi
 
 # Customize to your needs...
-
-
-# Load Angular CLI autocompletion.
-source <(ng completion script)
