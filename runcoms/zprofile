@@ -59,6 +59,7 @@ path=(
   /usr/local/{,s}bin(N)
   $path
   ${HOME}/.dotfiles/bin
+  ${KREW_ROOT:-$HOME/.krew}/bin
 )
 
 #
@@ -80,3 +81,13 @@ fi
 
 ## Disable TMUX if shell is loaded by any IntelliJ IDE.
 [[ ! -z "$INTELLIJ_ENVIRONMENT_READER" ]] && TMUX_AUTOSTART_DISABLE=1
+
+## add support for multiple kubeconfig files.
+kubeconfig="$HOME/.kube/config"
+for file in $HOME/.kube/*(.); do
+  if [[ $file != "$HOME/.kube/config" ]]; then
+    kubeconfig=":$file"
+  fi
+done
+
+export KUBECONFIG="${KUBECONFIG}:${kubeconfig}"
