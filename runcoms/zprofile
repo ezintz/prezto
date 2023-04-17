@@ -83,11 +83,11 @@ fi
 [[ ! -z "$INTELLIJ_ENVIRONMENT_READER" ]] && TMUX_AUTOSTART_DISABLE=1
 
 ## add support for multiple kubeconfig files.
-kubeconfig="$HOME/.kube/config"
+KUBECONFIG="${KUBECONFIG:-$HOME/.kube/config}"
 for file in $HOME/.kube/*(.); do
   if [[ $file != "$HOME/.kube/config" ]]; then
-    kubeconfig=":$file"
+    KUBECONFIG="${KUBECONFIG}:${file}"
   fi
 done
 
-export KUBECONFIG="${KUBECONFIG}:${kubeconfig}"
+export KUBECONFIG="${KUBECONFIG}"
