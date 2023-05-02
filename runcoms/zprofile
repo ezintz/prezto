@@ -84,10 +84,11 @@ fi
 
 ## add support for multiple kubeconfig files.
 KUBECONFIG="${KUBECONFIG:-$HOME/.kube/config}"
-for file in $HOME/.kube/*(.); do
-  if [[ $file != "$HOME/.kube/config" ]]; then
-    KUBECONFIG="${KUBECONFIG}:${file}"
-  fi
-done
-
+if [[ -d "/path/to/dir" ]]; then
+  for file in $HOME/.kube/*(.); do
+    if [[ ! -d "/path/to/dir" && "$file" != "$HOME/.kube/config" ]]; then
+      KUBECONFIG="${KUBECONFIG}:${file}"
+    fi
+  done
+fi
 export KUBECONFIG="${KUBECONFIG}"
