@@ -84,9 +84,9 @@ fi
 
 ## add support for multiple kubeconfig files.
 KUBECONFIG="${KUBECONFIG:-$HOME/.kube/config}"
-if [[ -d "/path/to/dir" ]]; then
+if [[ -d "$HOME/.kube" ]]; then
   for file in $HOME/.kube/*(.); do
-    if [[ ! -d "/path/to/dir" && "$file" != "$HOME/.kube/config" ]]; then
+    if [[ ! -d "$file" && "$file" != "$HOME/.kube/config" ]]; then
       KUBECONFIG="${KUBECONFIG}:${file}"
     fi
   done
