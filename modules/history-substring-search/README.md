@@ -63,12 +63,15 @@ _`${ZDOTDIR:-$HOME}/.zpreztorc`_:
 
 ```sh
 zstyle ':prezto:module:history-substring-search' globbing-flags ''
+```
 
-To set the search matched against the start of each history entry, add the following line to
+### Case sensitive search
+
+To set the search case-sensitivity, add the following line to
 _`${ZDOTDIR:-$HOME}/.zpreztorc`_:
 
 ```sh
-zstyle ':prezto:module:history-substring-search' prefixed 'yes'
+zstyle ':prezto:module:history-substring-search' case-sensitive 'yes'
 ```
 
 ### Case sensitive search
