@@ -77,6 +77,9 @@ zstyle ':prezto:module:autosuggestions' color 'yes'
 # Editor
 #
 
+# Set the characters that are considered to be part of a word.
+# zstyle ':prezto:module:editor' wordchars '*?_-.[]~&;!#$%^(){}<>'
+
 # Set the key mapping style to 'emacs' or 'vi'.
 zstyle ':prezto:module:editor' key-bindings 'emacs'
 
