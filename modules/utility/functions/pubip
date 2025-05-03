@@ -1,0 +1,14 @@
+#
+# Displays the public IP.
+#
+# Authors:
+#   Eduard Zintz <e@zintz.cc>
+#
+
+local ipv4Address="$(curl -s -4 icanhazip.com)"
+local ipv6Address="$(curl -s -6 icanhazip.com)"
+
+print "IPv4: $ipv4Address"
+print "IPv6: $ipv6Address"
+print ""
+return 0
