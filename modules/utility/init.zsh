@@ -171,9 +171,9 @@ typeset -A _download_helpers=(
 )
 
 if (( $+commands[$_download_helper] && $+_download_helpers[$_download_helper] )); then
-  alias get="$_download_helpers[$_download_helper]"
+  alias dl="$_download_helpers[$_download_helper]"
 elif (( $+commands[curl] )); then
-  alias get="$_download_helpers[curl]"
+  alias dl="$_download_helpers[curl]"
 fi
 
 unset _download_helper{,s}
