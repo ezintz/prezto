@@ -36,9 +36,8 @@ fi
 # Language
 #
 
-if [[ -z "$LANG" ]]; then
-  export LANG='en_US.UTF-8'
-fi
+## macOS is set to German region, but language should stay English.
+export LANG='en_US.UTF-8'
 
 #
 # Paths
