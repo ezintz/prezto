@@ -81,7 +81,7 @@ fi
 ## Disable TMUX if shell is loaded by any IntelliJ IDE.
 [[ ! -z "$INTELLIJ_ENVIRONMENT_READER" ]] && TMUX_AUTOSTART_DISABLE=1
 
-## add support for multiple kubeconfig files.
+## Support for multiple kubeconfig files.
 KUBECONFIG="${KUBECONFIG:-$HOME/.kube/config}"
 if [[ -d "$HOME/.kube" ]]; then
   for file in $HOME/.kube/*(.); do
@@ -92,5 +92,8 @@ if [[ -d "$HOME/.kube" ]]; then
 fi
 export KUBECONFIG="${KUBECONFIG}"
 
-# Added by OrbStack: command-line tools and integration
+# OrbStack command-line tools and integration.
 source ~/.orbstack/shell/init.zsh 2>/dev/null || :
+
+# Source machine-local environment variables (not tracked in repo).
+source ~/.zprofile.local 2>/dev/null || :
