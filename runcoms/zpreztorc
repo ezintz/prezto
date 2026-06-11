@@ -300,3 +300,6 @@ zstyle ':prezto:module:tmux:iterm' integrate 'yes'
 # before deleting or overwriting files. Set to 'no' to disable this safer
 # behavior.
 zstyle ':prezto:module:utility' safe-ops 'yes'
+
+# Source machine-local prezto overrides (not tracked in repo).
+[[ -f ~/.zpreztorc.local ]] && source ~/.zpreztorc.local 2>/dev/null || :
