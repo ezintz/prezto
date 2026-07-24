@@ -10,4 +10,8 @@ if [[ -s "${ZDOTDIR:-$HOME}/.dotfiles/prezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.dotfiles/prezto/init.zsh"
 fi
 
-# Customize to your needs...
+alias k='kubectl'
+alias claude='caffeinate -dimsu claude'
+
+# Source machine-local interactive config (aliases, paths) — not tracked in repo.
+source ~/.zshrc.local 2>/dev/null || :

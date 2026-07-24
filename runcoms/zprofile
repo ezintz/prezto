@@ -53,12 +53,14 @@ typeset -gU cdpath fpath mailpath path
 
 # Set the list of directories that Zsh searches for programs.
 path=(
-  $HOME/{,s}bin(N)
   /opt/{homebrew,local}/{,s}bin(N)
+  /opt/homebrew/opt/openjdk/{,s}bin(N)
   /usr/local/{,s}bin(N)
   $path
+  ${HOME}/{,s}bin(N)
   ${HOME}/.dotfiles/bin
   ${KREW_ROOT:-$HOME/.krew}/bin
+  ${HOME}/.antigravity/antigravity/{,s}bin(N)
 )
 
 #
@@ -82,12 +84,13 @@ fi
 [[ ! -z "$INTELLIJ_ENVIRONMENT_READER" ]] && TMUX_AUTOSTART_DISABLE=1
 
 ## Support for multiple kubeconfig files.
+## Base config plus every *.conf/*.yaml/*.yml in ~/.kube (real files or
+## symlinks-to-files; the (-.N) qualifier follows links and nullglobs).
+## The extension allowlist naturally skips `config`, dirs, and stray files.
 KUBECONFIG="${KUBECONFIG:-$HOME/.kube/config}"
 if [[ -d "$HOME/.kube" ]]; then
-  for file in $HOME/.kube/*(.); do
-    if [[ ! -d "$file" && "$file" != "$HOME/.kube/config" ]]; then
-      KUBECONFIG="${KUBECONFIG}:${file}"
-    fi
+  for file in $HOME/.kube/*.conf(-.N) $HOME/.kube/*.yaml(-.N) $HOME/.kube/*.yml(-.N); do
+    KUBECONFIG="${KUBECONFIG}:${file}"
   done
 fi
 export KUBECONFIG="${KUBECONFIG}"
@@ -95,5 +98,20 @@ export KUBECONFIG="${KUBECONFIG}"
 # OrbStack command-line tools and integration.
 source ~/.orbstack/shell/init.zsh 2>/dev/null || :
 
+# Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Direnv
+export DIRENV_LOG_FORMAT=""
+eval "$(direnv hook zsh)" 2>/dev/null || :
+
+# innosabi workspace configuration
+export INNOSABI_GRAVITY_DIRECTORY=~/Workspace/innosabi/gravity
+export HUSKY_POST_CHECKOUT_TIMEOUT=0
+export HUSKY_POST_CHECKOUT_VERBOSE=0
+export PHP_CS_FIXER_IGNORE_ENV=1
+export GIT_REPOS_PATH="$HOME/Workspace/innosabi"
+
 # Source machine-local environment variables (not tracked in repo).
+# Machine-local secrets (e.g. GH_TOKEN) live here, outside version control.
 source ~/.zprofile.local 2>/dev/null || :
