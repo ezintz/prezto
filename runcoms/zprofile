@@ -105,13 +105,6 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 export DIRENV_LOG_FORMAT=""
 eval "$(direnv hook zsh)" 2>/dev/null || :
 
-# innosabi workspace configuration
-export INNOSABI_GRAVITY_DIRECTORY=~/Workspace/innosabi/gravity
-export HUSKY_POST_CHECKOUT_TIMEOUT=0
-export HUSKY_POST_CHECKOUT_VERBOSE=0
-export PHP_CS_FIXER_IGNORE_ENV=1
-export GIT_REPOS_PATH="$HOME/Workspace/innosabi"
-
 # Source machine-local environment variables (not tracked in repo).
 # Machine-local secrets (e.g. GH_TOKEN) live here, outside version control.
 source ~/.zprofile.local 2>/dev/null || :
