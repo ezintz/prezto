@@ -103,9 +103,11 @@ source ~/.orbstack/shell/init.zsh 2>/dev/null || :
 # Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Direnv
-export DIRENV_LOG_FORMAT=""
-eval "$(direnv hook zsh)" 2>/dev/null || :
+# Direnv (optional; skipped if not installed)
+if (( ${+commands[direnv]} )); then
+  export DIRENV_LOG_FORMAT=""
+  eval "$(direnv hook zsh)"
+fi
 
 # Source machine-local environment variables (not tracked in repo).
 # Machine-local secrets (e.g. GH_TOKEN) live here, outside version control.

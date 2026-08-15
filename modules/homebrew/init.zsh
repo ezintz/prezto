@@ -40,6 +40,16 @@ fi
 
 # Homebrew
 if ! zstyle -t ':prezto:module:homebrew:alias' skip; then
+  # Always confirm-free and prune the cache after upgrading.
+  brew() {
+    if [[ "$1" == 'upgrade' ]]; then
+      shift
+      command brew upgrade -y "$@" && command brew cleanup --prune=all -s
+    else
+      command brew "$@"
+    fi
+  }
+
   alias brewc='brew cleanup'
   alias brewi='brew install'
   alias brewL='brew leaves'
