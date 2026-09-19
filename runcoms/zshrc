@@ -5,6 +5,10 @@
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
 
+# In cmux, hand the terminal to a per-tab tmux session that survives cmux
+# restarts and reboots; returns without doing anything anywhere else.
+source "${ZDOTDIR:-$HOME}/.dotfiles/tmux/cmux.zsh" 2>/dev/null
+
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.dotfiles/prezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.dotfiles/prezto/init.zsh"
