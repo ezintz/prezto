@@ -62,6 +62,8 @@ path=(
   ${HOME}/.docker/bin(N)
   ${HOME}/.local/bin(N)
   ${KREW_ROOT:-$HOME/.krew}/bin
+  ${HOME}/.local/bin(N)
+  ${HOME}/.cargo/bin(N)
   ${HOME}/.antigravity/antigravity/{,s}bin(N)
 )
 
