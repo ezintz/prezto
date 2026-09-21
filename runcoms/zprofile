@@ -59,6 +59,8 @@ path=(
   $path
   ${HOME}/{,s}bin(N)
   ${HOME}/.dotfiles/bin
+  ${HOME}/.docker/bin(N)
+  ${HOME}/.local/bin(N)
   ${KREW_ROOT:-$HOME/.krew}/bin
   ${HOME}/.antigravity/antigravity/{,s}bin(N)
 )
