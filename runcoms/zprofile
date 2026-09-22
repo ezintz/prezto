@@ -64,8 +64,22 @@ path=(
   ${KREW_ROOT:-$HOME/.krew}/bin
   ${HOME}/.local/bin(N)
   ${HOME}/.cargo/bin(N)
+  ${HOME}/.dotnet/tools(N)
   ${HOME}/.antigravity/antigravity/{,s}bin(N)
 )
+
+## The PATH entry above only makes a global tool findable; DOTNET_ROOT is what
+## lets it run. The apphost resolves its runtime from DOTNET_ROOT, then
+## /etc/dotnet/install_location, then /usr/local/share/dotnet -- never from
+## PATH -- and Homebrew installs outside all three, so `ilspycmd` dies with
+## "You must install .NET" until this is set. Homebrew repoints the opt symlink
+## on upgrade; the Cellar path behind it carries the version and would go
+## stale. $HOMEBREW_PREFIX is not usable: the `brew shellenv` below leaves it
+## unset when this file is sourced.
+() {
+  local root=(/opt/homebrew/opt/dotnet/libexec(N) /usr/local/opt/dotnet/libexec(N))
+  (( $#root )) && export DOTNET_ROOT=$root[1]
+}
 
 #
 # Less
