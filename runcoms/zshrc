@@ -15,7 +15,10 @@ if [[ -s "${ZDOTDIR:-$HOME}/.dotfiles/prezto/init.zsh" ]]; then
 fi
 
 alias k='kubectl'
-alias claude='caffeinate -dimsu claude'
+## Keep the Mac awake while Claude Code runs; caffeinate is macOS-only.
+if (( ${+commands[caffeinate]} )); then
+  alias claude='caffeinate -dimsu claude'
+fi
 
 # Source machine-local interactive config (aliases, paths) — not tracked in repo.
 source ~/.zshrc.local 2>/dev/null || :

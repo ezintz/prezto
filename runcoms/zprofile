@@ -16,7 +16,14 @@ fi
 #
 # Android
 #
-export ANDROID_HOME=/usr/local/opt/android-sdk
+## Wherever the android-commandlinetools cask put it (Apple silicon, then Intel).
+for _android_home in /opt/homebrew/share/android-commandlinetools /usr/local/share/android-commandlinetools; do
+  if [[ -d "$_android_home" ]]; then
+    export ANDROID_HOME="$_android_home"
+    break
+  fi
+done
+unset _android_home
 
 #
 # Editors
@@ -36,8 +43,11 @@ fi
 # Language
 #
 
-## macOS is set to German region, but language should stay English.
-export LANG='en_US.UTF-8'
+## macOS is set to German region, but language should stay English. Only on
+## macOS: a minimal Linux image may not have this locale generated at all.
+if [[ "$OSTYPE" == darwin* ]]; then
+  export LANG='en_US.UTF-8'
+fi
 
 #
 # Paths
@@ -58,9 +68,8 @@ path=(
   /usr/local/{,s}bin(N)
   $path
   ${HOME}/{,s}bin(N)
-  ${HOME}/.dotfiles/bin
+  ${HOME}/.dotfiles/bin(N)
   ${HOME}/.docker/bin(N)
-  ${HOME}/.local/bin(N)
   ${KREW_ROOT:-$HOME/.krew}/bin
   ${HOME}/.local/bin(N)
   ${HOME}/.cargo/bin(N)
@@ -116,8 +125,14 @@ export KUBECONFIG="${KUBECONFIG}"
 # OrbStack command-line tools and integration.
 source ~/.orbstack/shell/init.zsh 2>/dev/null || :
 
-# Homebrew
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Homebrew: Apple silicon, Intel, or Linuxbrew — whichever exists.
+for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+  if [[ -x "$_brew" ]]; then
+    eval "$("$_brew" shellenv)"
+    break
+  fi
+done
+unset _brew
 
 # Direnv (optional; skipped if not installed)
 if (( ${+commands[direnv]} )); then
