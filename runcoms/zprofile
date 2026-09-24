@@ -73,6 +73,7 @@ path=(
   ${KREW_ROOT:-$HOME/.krew}/bin
   ${HOME}/.local/bin(N)
   ${HOME}/.cargo/bin(N)
+  ${HOME}/.bun/bin(N)
   ${HOME}/.dotnet/tools(N)
   ${HOME}/.antigravity/antigravity/{,s}bin(N)
 )
