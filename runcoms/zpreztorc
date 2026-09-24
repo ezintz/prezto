@@ -303,4 +303,4 @@ zstyle ':prezto:module:tmux:iterm' integrate 'yes'
 zstyle ':prezto:module:utility' safe-ops 'yes'
 
 # Source machine-local prezto overrides (not tracked in repo).
-[[ -f ~/.zpreztorc.local ]] && source ~/.zpreztorc.local 2>/dev/null || :
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zpreztorc" ]] && source "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zpreztorc" 2>/dev/null || :

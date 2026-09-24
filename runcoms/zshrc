@@ -21,4 +21,4 @@ if (( ${+commands[caffeinate]} )); then
 fi
 
 # Source machine-local interactive config (aliases, paths) — not tracked in repo.
-source ~/.zshrc.local 2>/dev/null || :
+source "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zshrc" 2>/dev/null || :

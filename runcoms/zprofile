@@ -141,6 +141,7 @@ if (( ${+commands[direnv]} )); then
   eval "$(direnv hook zsh)"
 fi
 
-# Source machine-local environment variables (not tracked in repo).
-# Machine-local secrets (e.g. GH_TOKEN) live here, outside version control.
-source ~/.zprofile.local 2>/dev/null || :
+# Machine-local environment from the private overlay (~/.config/dotfiles).
+source "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zprofile" 2>/dev/null || :
+# Keys: the overlay keeps them in an untracked file so its backup never has them.
+source "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/secrets.env" 2>/dev/null || :
