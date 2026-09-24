@@ -54,7 +54,15 @@ else
   _bzip2_bin='bunzip2'
 fi
 
-_zstd_bin='zstd'
+# Unlike gunzip and bunzip2 above, zstd compresses by default, so naming it
+# here made tar re-compress the archive it was trying to open and report
+# "Unrecognized archive format". The other decompressors need no such flag,
+# which is why only .tar.zst was affected.
+if (( $+commands[unzstd] )); then
+  _zstd_bin='unzstd'
+else
+  _zstd_bin='zstd -d'
+fi
 
 while (( $# > 0 )); do
   if [[ ! -s "$1" ]]; then
@@ -68,6 +76,20 @@ while (( $# > 0 )); do
   file_path="${1:A}"
   extract_dir="${file_name:r}"
   case "$1:l" in
+    # One arm covers every .age that archive can produce, because tar reads the
+    # compression off the stream itself -- the .tar.gz.age / .tar.bz2.age /
+    # .tar.xz.age / .tar.age distinction only has to be made when writing.
+    # -p, unlike the arms below, because an encrypted archive is normally
+    # holding keys, and a non-root tar otherwise drops the stored modes through
+    # the umask -- leaving a private key that ssh will refuse to use.
+    (*.age)
+      if (( $+commands[age] )); then
+        age -d "$1" | tar -xvpf -
+      else
+        print "$0: age is not installed; cannot extract $1" >&2
+        success=1
+      fi
+    ;;
     (*.tar.gz|*.tgz) tar -xvf "$1" --use-compress-program="${_gzip_bin}" ;;
     (*.tar.bz2|*.tbz|*.tbz2) tar -xvf "$1" --use-compress-program="${_bzip2_bin}" ;;
     (*.tar.xz|*.txz) tar -xvf "$1" --use-compress-program="${_xz_bin}" ;;

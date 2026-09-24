@@ -31,10 +31,34 @@ installed:
 - _.rar_ requires `rar` (needed for `archive` support), `unrar` or `lsar` and `unar`.
 - _.7z_ requires `7za`.
 - _.deb_ requires `ar`, `tar`.
+- _.age_ requires [`age`][4], and is a layer over the tar formats rather than
+  one of them: _.tar.age_, _.tar.gz.age_, _.tar.bz2.age_ and _.tar.xz.age_.
 
 Additionally, if `pigz` and/or `pbzip2` are installed, `archive` will use them
 over their traditional counterparts, `gzip` and `bzip2` respectively, to take
 full advantage of all available CPU cores for compression.
+
+## Encrypted Archives
+
+```sh
+archive keys.tar.gz.age ~/.ssh ~/.gnupg   # prompts for a passphrase
+lsarchive keys.tar.gz.age
+unarchive keys.tar.gz.age
+```
+
+`archive` pipes tar straight into `age`, so the contents are never written to
+disk unencrypted, and `unarchive` extracts with the stored permissions — an
+encrypted archive usually holds private keys, which `ssh` refuses to use if the
+umask has widened them.
+
+`.zip.age`, `.rar.age` and `.7z.age` are rejected: those tools only write to a
+file they name themselves, which would mean staging the contents in plaintext
+first. `.tar.zst.age` is rejected because libarchive cannot read a zstd stream
+back off a pipe, so the result would not be extractable.
+
+Sockets found under the paths being archived are skipped rather than aborting
+the run — `tar` cannot store one, and `~/.ssh` and `~/.gnupg` normally hold
+live `ControlMaster` and `gpg-agent` sockets, which are recreated on demand.
 
 ## Alternatives
 
@@ -51,3 +75,4 @@ _The authors of this module should be contacted via the [issue tracker][3]._
 [1]: ../completion#readme
 [2]: https://theunarchiver.com/command-line
 [3]: https://github.com/sorin-ionescu/prezto/issues
+[4]: https://age-encryption.org

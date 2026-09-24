@@ -55,13 +55,72 @@ fi
 
 _zstd_bin='zstd'
 
+# .age is a layer over the tar formats rather than a format of its own: tar
+# writes to a pipe, age encrypts what comes off it, and no unencrypted copy of
+# the contents ever reaches the disk. zip, rar and 7z cannot take part, because
+# they only write to a file they name themselves. .tar.zst is left out for a
+# different reason: libarchive cannot read a zstd stream back off a pipe, so
+# unarchive would not be able to open what this wrote.
+if [[ "${archive_name}" == *.age ]] && (( ! $+commands[age] )); then
+  print "$0: age is not installed; cannot create ${archive_name}" >&2
+  return 1
+fi
+
+# tar cannot archive a socket, and aborts the entire run with "Write error"
+# rather than skipping one. The directories most worth archiving keep live
+# ones: ssh puts ControlMaster and forwarded-agent sockets under ~/.ssh,
+# gpg-agent its own under ~/.gnupg. They are runtime state that is recreated
+# on demand, so dropping them costs nothing and letting them abort the archive
+# costs the archive.
+local -a _exclude
+_exclude=( ${(f)"$(find ${=path_to_archive} -type s 2>/dev/null)"} )
+(( $#_exclude )) && _exclude=( "${_exclude[@]/#/--exclude=}" )
+
+# Encrypting is handled here rather than as arms of the case below, because it
+# is one pipeline for every tar format and only the compressor differs.
+if [[ "${archive_name}" == *.age ]]; then
+  local -a _compress _status
+  local _report
+  case "${archive_name}" in
+    (*.tar.age) _compress=() ;;
+    (*.tar.gz.age|*.tgz.age) _compress=( --use-compress-program="${_gzip_bin}" ) ;;
+    (*.tar.bz2.age|*.tbz.age|*.tbz2.age) _compress=( --use-compress-program="${_bzip2_bin}" ) ;;
+    (*.tar.xz.age|*.txz.age) _compress=( --use-compress-program="${_xz_bin}" ) ;;
+    (*) print "\nonly .tar, .tar.gz, .tar.bz2 and .tar.xz can be encrypted with age: ${archive_name}" >&2
+        return 1 ;;
+  esac
+
+  # tar and age run at the same time, so tar's running report of what it is
+  # adding would otherwise print straight through age's passphrase prompt --
+  # leaving the prompt buried mid-list, easy to miss and easy to type over.
+  # The report is held in a file and replayed once age has the passphrase.
+  _report="$(mktemp)"
+  # 2>| and >|, not 2> and >: mktemp has already created the report file, and
+  # NOCLOBBER -- which prezto does not set but plenty of setups do -- refuses
+  # to redirect onto a file that exists.
+  tar -cvf - "${_compress[@]}" "${_exclude[@]}" "${=path_to_archive}" 2>| "${_report}" \
+    | age -p >| "${archive_name}"
+  _status=( $pipestatus )
+  cat "${_report}" >&2
+  rm -f "${_report}"
+
+  # $? would only carry age's status, and tar failing while age happily
+  # encrypts what it did get is exactly how a half-written archive is made.
+  if (( _status[1] != 0 || _status[2] != 0 )); then
+    rm -f "${archive_name}"
+    print "$0: failed to create ${archive_name}; nothing was written" >&2
+    return 1
+  fi
+  return 0
+fi
+
 case "${archive_name}" in
-  (*.tar.gz|*.tgz) tar -cvf "${archive_name}" --use-compress-program="${_gzip_bin}" "${=path_to_archive}" ;;
-  (*.tar.bz2|*.tbz|*.tbz2) tar -cvf "${archive_name}" --use-compress-program="${_bzip2_bin}" "${=path_to_archive}" ;;
-  (*.tar.xz|*.txz) tar -cvf "${archive_name}" --use-compress-program="${_xz_bin}" "${=path_to_archive}" ;;
-  (*.tar.lzma|*.tlz) tar -cvf "${archive_name}" --lzma "${=path_to_archive}" ;;
-  (*.tar.zst|*.tzst) tar -cvf "${archive_name}" --use-compress-program="${_zstd_bin}" "${=path_to_archive}" ;;
-  (*.tar) tar -cvf "${archive_name}" "${=path_to_archive}" ;;
+  (*.tar.gz|*.tgz) tar -cvf "${archive_name}" "${_exclude[@]}" --use-compress-program="${_gzip_bin}" "${=path_to_archive}" ;;
+  (*.tar.bz2|*.tbz|*.tbz2) tar -cvf "${archive_name}" "${_exclude[@]}" --use-compress-program="${_bzip2_bin}" "${=path_to_archive}" ;;
+  (*.tar.xz|*.txz) tar -cvf "${archive_name}" "${_exclude[@]}" --use-compress-program="${_xz_bin}" "${=path_to_archive}" ;;
+  (*.tar.lzma|*.tlz) tar -cvf "${archive_name}" "${_exclude[@]}" --lzma "${=path_to_archive}" ;;
+  (*.tar.zst|*.tzst) tar -cvf "${archive_name}" "${_exclude[@]}" --use-compress-program="${_zstd_bin}" "${=path_to_archive}" ;;
+  (*.tar) tar -cvf "${archive_name}" "${_exclude[@]}" "${=path_to_archive}" ;;
   (*.zip|*.jar) zip -r "${archive_name}" "${=path_to_archive}" ;;
   (*.rar) rar a "${archive_name}" "${=path_to_archive}" ;;
   (*.7z) 7za a "${archive_name}" "${=path_to_archive}" ;;

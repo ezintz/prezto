@@ -33,7 +33,16 @@ while (( $# > 0 )); do
   fi
 
   case "$1:l" in
-    (*.tar.gz|*.tgz) tar t${verbose:+v}vzf "$1" ;;
+    # As in unarchive: tar takes the compression off the stream, so every .age
+    # variant lists through one arm.
+    (*.age)
+      if (( $+commands[age] )); then
+        age -d "$1" | tar -t${verbose:+v}f -
+      else
+        print "$0: age is not installed; cannot list $1" >&2
+      fi
+    ;;
+    (*.tar.gz|*.tgz) tar -t${verbose:+v}zf "$1" ;;
     (*.tar.bz2|*.tbz|*.tbz2) tar t${verbose:+v}jf "$1" ;;
     (*.tar.xz|*.txz) tar --xz --help &> /dev/null \
       && tar --xz -t${verbose:+v}f "$1" \
@@ -41,7 +50,10 @@ while (( $# > 0 )); do
     (*.tar.zma|*.tlz) tar --lzma --help &> /dev/null \
       && tar --lzma -t${verbose:+v}f "$1" \
       || lzcat "$1" | tar x${verbose:+v}f - ;;
-    (*.tar.zst|*.tzst) tar -I zstd -t${verbose:+v}f "$1" ;;
+    # No -I: that is GNU tar's spelling of --use-compress-program, and bsdtar
+    # reads it as --files-from, so it looks for a file named zstd. Both tars
+    # recognise zstd from the archive's magic when simply asked to read it.
+    (*.tar.zst|*.tzst) tar -t${verbose:+v}f "$1" ;;
     (*.tar) tar t${verbose:+v}f "$1" ;;
     (*.zip|*.jar) unzip -l${verbose:+v} "$1" ;;
     (*.rar) ( (( $+commands[unrar] )) \
