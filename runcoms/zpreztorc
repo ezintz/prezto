@@ -299,8 +299,15 @@ zstyle ':prezto:module:tmux:iterm' integrate 'yes'
 
 # Enabled safe options. This aliases cp, ln, mv and rm so that they prompt
 # before deleting or overwriting files. Set to 'no' to disable this safer
-# behavior.
-zstyle ':prezto:module:utility' safe-ops 'yes'
+# behavior. Off for the shell an agent runs commands in (Claude Code sets
+# CLAUDECODE, Codex CODEX_THREAD_ID): nobody can answer the prompt there, so it
+# reads "no" and the overwrite or delete is skipped while the command carries
+# on as if it had happened.
+if [[ -n $CLAUDECODE || -n $CODEX_THREAD_ID ]]; then
+  zstyle ':prezto:module:utility' safe-ops 'no'
+else
+  zstyle ':prezto:module:utility' safe-ops 'yes'
+fi
 
 # Source machine-local prezto overrides (not tracked in repo).
 [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zpreztorc" ]] && source "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zpreztorc" 2>/dev/null || :
