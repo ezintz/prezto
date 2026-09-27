@@ -39,5 +39,13 @@ if (( ${+commands[mise]} )); then
   eval "$(mise activate zsh)"
 fi
 
+# direnv (optional; skipped if not installed). Here rather than in zprofile:
+# its hook runs before each prompt, so it is interactive setup, and zprofile
+# runs only for login shells. After mise, which installs direnv here.
+if (( ${+commands[direnv]} )); then
+  export DIRENV_LOG_FORMAT=""
+  eval "$(direnv hook zsh)"
+fi
+
 # Source machine-local interactive config (aliases, paths) — not tracked in repo.
 source "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zshrc" 2>/dev/null || :
