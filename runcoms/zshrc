@@ -14,6 +14,15 @@ if [[ -s "${ZDOTDIR:-$HOME}/.dotfiles/prezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.dotfiles/prezto/init.zsh"
 fi
 
+# `>` overwrites again in the shell an agent runs commands in (Claude Code sets
+# CLAUDECODE, Codex CODEX_THREAD_ID). The directory module turns CLOBBER off,
+# and there a refused `> file` only prints "file exists" while the command
+# carries on with the old file, e.g. running the previous version of a script
+# it meant to rewrite. After Prezto, which is where that module runs.
+if [[ -n $CLAUDECODE || -n $CODEX_THREAD_ID ]]; then
+  setopt CLOBBER
+fi
+
 alias k='kubectl'
 ## Keep the Mac awake while Claude Code runs; caffeinate is macOS-only.
 if (( ${+commands[caffeinate]} )); then
