@@ -14,13 +14,17 @@ if [[ -s "${ZDOTDIR:-$HOME}/.dotfiles/prezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.dotfiles/prezto/init.zsh"
 fi
 
-# `>` overwrites again in the shell an agent runs commands in (Claude Code sets
-# CLAUDECODE, Codex CODEX_THREAD_ID). The directory module turns CLOBBER off,
-# and there a refused `> file` only prints "file exists" while the command
-# carries on with the old file, e.g. running the previous version of a script
-# it meant to rewrite. After Prezto, which is where that module runs.
+# The shell an agent runs commands in (Claude Code sets CLAUDECODE, Codex
+# CODEX_THREAD_ID) behaves like the bash those commands are written for; each
+# difference failed there silently rather than with an error:
+# - CLOBBER: the directory module turns it off, and a refused `> file` only
+#   printed "file exists" while the command carried on with the old file, e.g.
+#   running the previous version of a script it meant to rewrite. Set after
+#   Prezto, which is where that module runs.
+# - SH_WORD_SPLIT: zsh leaves an unquoted `$var` whole, so `for f in $files`
+#   ran once over the whole list.
 if [[ -n $CLAUDECODE || -n $CODEX_THREAD_ID ]]; then
-  setopt CLOBBER
+  setopt CLOBBER SH_WORD_SPLIT
 fi
 
 alias k='kubectl'
