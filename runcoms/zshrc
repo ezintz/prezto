@@ -33,5 +33,11 @@ if (( ${+commands[caffeinate]} )); then
   alias claude='caffeinate -dimsu claude'
 fi
 
+# mise, fully: switches tool versions as the directory changes (zprofile only
+# puts its shims on PATH).
+if (( ${+commands[mise]} )); then
+  eval "$(mise activate zsh)"
+fi
+
 # Source machine-local interactive config (aliases, paths) — not tracked in repo.
 source "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zshrc" 2>/dev/null || :

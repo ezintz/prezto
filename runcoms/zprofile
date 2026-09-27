@@ -135,6 +135,14 @@ for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbr
 done
 unset _brew
 
+# mise's shims, so a login shell and what it starts find the tools mise
+# installs (~/.config/mise/config.toml, a project's mise.toml) without a
+# prompt; zshrc activates it fully for interactive shells. Before direnv,
+# which is itself one of those tools here.
+if (( ${+commands[mise]} )); then
+  eval "$(mise activate zsh --shims)"
+fi
+
 # Direnv (optional; skipped if not installed)
 if (( ${+commands[direnv]} )); then
   export DIRENV_LOG_FORMAT=""
