@@ -15,6 +15,32 @@ if [[ -s "${ZDOTDIR:-$HOME}/.dotfiles/prezto/init.zsh" ]]; then
 fi
 
 # The shell an agent runs commands in (Claude Code sets CLAUDECODE, Codex
+# Inside tmux a modified key arrives as a CSI u sequence (tmux/tmux.conf sets
+# extended-keys to always, for Claude Code), which zsh has no binding for: it
+# ran the prefix as some other key and typed the rest, so a held Shift+Backspace
+# filled the line with "7;2u". Each is fed back as the legacy key it stands for,
+# so it does whatever that key is bound to in the current keymap.
+() {
+  local -A csi_u=(
+    '^[[127;2u' '^?'     # Shift+Backspace
+    '^[[127;5u' '^[^?'   # Ctrl+Backspace: backward-kill-word, as Alt+Backspace
+    '^[[127;6u' '^[^?'   # Ctrl+Shift+Backspace
+    '^[[9;2u'   '^[[Z'   # Shift+Tab: reverse-menu-complete
+    '^[[32;2u'  ' '      # Shift+Space
+    '^[[13;2u'  '^M'     # Shift+Enter
+    '^[[13;5u'  '^M'     # Ctrl+Enter
+  )
+  local keymap seq
+  # menuselect (the open completion menu, where Shift+Tab steps back) exists
+  # only once zsh/complist is loaded, which otherwise happens at first use.
+  zmodload -i zsh/complist
+  for keymap in emacs viins menuselect; do
+    for seq in ${(k)csi_u}; do
+      bindkey -M $keymap -s $seq $csi_u[$seq]
+    done
+  done
+}
+
 # CODEX_THREAD_ID) behaves like the bash those commands are written for; each
 # difference failed there silently rather than with an error:
 # - CLOBBER: the directory module turns it off, and a refused `> file` only

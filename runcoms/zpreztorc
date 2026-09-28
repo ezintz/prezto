@@ -215,6 +215,13 @@ zstyle ':prezto:module:ssh:load' identities 'id_rsa' 'id_ed25519'
 # Syntax Highlighting
 #
 
+# Leave a buffer longer than this unhighlighted. On every keypress
+# zsh-syntax-highlighting first clears its colours, then skips recolouring
+# while input is still queued -- so holding Backspace in a long pasted buffer,
+# where recolouring is slow enough for key repeat to queue up, flickered
+# between coloured and plain. Beyond this length it simply stays plain.
+ZSH_HIGHLIGHT_MAXLENGTH=512
+
 # Set syntax highlighters.
 # By default, only the main highlighter is enabled.
 zstyle ':prezto:module:syntax-highlighting' highlighters \
