@@ -40,7 +40,22 @@ if [[ -S "$SSH_AUTH_SOCK" && "$SSH_AUTH_SOCK" != "$_ssh_agent_sock" ]]; then
 fi
 
 # Load identities.
+_ssh_add_flags=()
 if [[ ${(@M)${(f)"$(ssh-add -l 2>&1)"}:#The agent has no identities*} ]]; then
+  _ssh_load=1
+  # Apple's ssh-add keeps passphrases in the login keychain. Loading from there
+  # never prompts, so a shell nobody is watching yet -- every pane tmux restores
+  # after a reboot starts one at once -- is not left on a passphrase prompt,
+  # which discards whatever else was typed into the pane. A passphrase typed
+  # below is stored, so the prompt comes once rather than after every reboot.
+  # It exits 0 even when the keychain held nothing, hence the second -l.
+  if [[ "$OSTYPE" == darwin* && "$commands[ssh-add]" == /usr/bin/ssh-add ]]; then
+    ssh-add --apple-load-keychain < /dev/null 2> /dev/null
+    [[ ${(@M)${(f)"$(ssh-add -l 2>&1)"}:#The agent has no identities*} ]] || _ssh_load=0
+    _ssh_add_flags=(--apple-use-keychain)
+  fi
+fi
+if (( _ssh_load )); then
   zstyle -a ':prezto:module:ssh:load' identities '_ssh_identities'
   # ssh-add has strange requirements for running SSH_ASKPASS, so we duplicate
   # them here. Essentially, if the other requirements are met, we redirect stdin
@@ -53,11 +68,11 @@ if [[ ${(@M)${(f)"$(ssh-add -l 2>&1)"}:#The agent has no identities*} ]]; then
   # program specified by SSH_ASKPASS and open an X11 window to read the
   # passphrase.
   if [[ -n "$DISPLAY" && -x "$SSH_ASKPASS" ]]; then
-    ssh-add ${_ssh_identities:+$_ssh_dir/${^~_ssh_identities[@]}} < /dev/null 2> /dev/null
+    ssh-add $_ssh_add_flags ${_ssh_identities:+$_ssh_dir/${^~_ssh_identities[@]}} < /dev/null 2> /dev/null
   else
-    ssh-add ${_ssh_identities:+$_ssh_dir/${^~_ssh_identities[@]}} 2> /dev/null
+    ssh-add $_ssh_add_flags ${_ssh_identities:+$_ssh_dir/${^~_ssh_identities[@]}} 2> /dev/null
   fi
 fi
 
 # Clean up.
-unset _ssh_{dir,identities} _ssh_agent_{env,sock}
+unset _ssh_{dir,identities,load,add_flags} _ssh_agent_{env,sock}

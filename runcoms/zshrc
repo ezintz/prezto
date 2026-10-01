@@ -59,6 +59,24 @@ if (( ${+commands[caffeinate]} )); then
   alias claude='caffeinate -dimsu claude'
 fi
 
+# After a reboot, tmux/claude-session.sh leaves each restored pane the Claude
+# Code conversation it was running. It is resumed at the first prompt, when
+# startup (and any ssh-add passphrase prompt in it) is over; typed into the pane
+# during startup instead, the line was lost. Not in Claude Code's own shell,
+# which inherits TMUX_PANE from the pane Claude runs in.
+if [[ -n $TMUX_PANE && -z $CLAUDECODE ]]; then
+  _claude_resume() {
+    add-zsh-hook -d precmd _claude_resume
+    local file=~/.local/share/tmux/resurrect/claude-resume/${${(s:,:)TMUX}[2]}-${TMUX_PANE#%}
+    [[ -r $file ]] || return 0
+    local id=$(<$file)
+    command rm -f -- $file
+    [[ -n $id ]] && claude --resume $id
+  }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook precmd _claude_resume
+fi
+
 # mise, fully: switches tool versions as the directory changes (zprofile only
 # puts its shims on PATH).
 if (( ${+commands[mise]} )); then
